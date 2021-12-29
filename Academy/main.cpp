@@ -91,6 +91,60 @@ public:
 		this->attendance = attendance;
 	}
 
+	//                     Constructors:
+	Student(const std::string& last_name, const std::string& first_name, unsigned int age,
+		const std::string& speciality, const std::string& group, double rating, double attendance)
+		:Human(last_name,first_name,age)
+	{
+		set_speciality(speciality);
+		set_group(group);
+		set_rating(rating);
+		set_attendance(attendance);
+		std::cout << "SConstructor:\t" << this << std::endl;
+	}
+	~Student()
+	{
+		std::cout<<"SDestructor:\t" <<this<< std::endl;
+	}
+	void print()const
+	{
+		Human::print();
+		std::cout << speciality << " " << group << " " << rating << " " << attendance << std::endl;
+	}
+};
+
+
+class Teacher :public Human,Student
+	{
+		unsigned int experience;
+	public:
+		 unsigned int get_experience()const
+		{
+			return experience;
+		}
+
+		void set_experience(unsigned int experience)
+		{
+			this->experience = experience;
+		}
+		//                     Constructors:
+		Teacher(const std::string& last_name, const std::string& first_name, unsigned int age,
+			const std::string& speciality, const std::string& group, double rating, double attendance,unsigned int experience)
+			:Human(last_name, first_name, age),Student(last_name, first_name,age, speciality, group, rating, attendance)
+		{
+			set_experience(experience);
+			std::cout << "TConstructor:\t" << this << std::endl;
+		}
+		~Teacher()
+		{
+			std::cout << "TDestructor:\t" << this << std::endl;
+		}
+		void print()const
+		{
+			Student::print();
+			std::cout << experience<<" лет" << std::endl;
+		}
+
 };
 
 
@@ -100,4 +154,13 @@ public:
 void main()
 {
 	setlocale(LC_ALL, "Rus");
+	Human human("Connor", "Jonh", 18);
+	human.print();
+
+	Student stud("Pinkman", "Jessie", 25, "Chemistry", "WW_123", 85, 95);
+	stud.print();
+
+	Teacher teach("Baker", "James", 30, "teacher programmer", "-", 0, 0, 11);
+	teach.print();
+
 }
