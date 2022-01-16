@@ -50,9 +50,14 @@ public:
 	}
 
 	//				Methods:
-	virtual void print()const
+	friend std::ostream& operator<<(std::ostream& os, const Human& obj)
 	{
-		cout << last_name << " " << first_name << " " << age << " лет" << endl;
+		return obj.print(os);
+	}
+	virtual std::ostream& print(std::ostream& os)const
+	{
+		os << last_name << " " << first_name << " " << age << " лет" << endl;
+		return os;
 	}
 };
 
@@ -83,11 +88,11 @@ public:
 		cout << "EDestructor:\t" << this << endl;
 	}
 
-	void print()const
+	virtual std::ostream& print(std::ostream& os)const 
 	{
-		Human::print();
-		cout << position;
-		cout << endl;
+		os << position;
+		os<< endl;
+		return os;
 	}
 };
 #define PERMANENT_EMPLOYEE_TAKE_PARAMETERS double salary
@@ -114,10 +119,10 @@ public:
 		std::cout << "PEDestructor:\t" << this << std::endl;
 	}
 	//             Methods:
-	void print()const
+	virtual std::ostream& print(std::ostream& os)const 
 	{
-		Employee::print();
-		std::cout << salary << std::endl;
+		os << salary << std::endl;
+		return os;
 	}
 };
 #define HOURLY_EMPLOYEE_TAKE_PARAMETERS double rate, int hours
@@ -162,12 +167,15 @@ public:
 		std::cout << "HEDestructor:\t" << this << std::endl;
 	}
 	//              Methods:
-	void print()const
+	virtual std::ostream& print(std::ostream& os)const 
 	{
-		Employee::print();
-		std::cout <<"Тариф: " << rate <<", отработано:" << hours <<", итого: "<<get_salary()<< std::endl;
+		os <<"Тариф: " << rate <<", отработано:" << hours <<", итого: "<<get_salary()<< std::endl;	
+		return os;
 	}
+	
 };
+
+
 void main()
 {
 	setlocale(LC_ALL, "");
@@ -183,7 +191,8 @@ void main()
 	for (int i = 0; i < sizeof(department) / sizeof(Employee*); i++)
 	{
 		std::cout << typeid(*department[i]).name() << std::endl;
-		department[i]->print();
+		//department[i]->print();
+		std::cout << *department[i] << std::endl;
 		total_salary += department[i]->get_salary();
 		std::cout << "\n---------------------------------------\n";
 	}
