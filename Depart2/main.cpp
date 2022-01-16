@@ -87,8 +87,7 @@ public:
 	{
 		cout << "EDestructor:\t" << this << endl;
 	}
-
-	virtual std::ostream& print(std::ostream& os)const 
+	virtual std::ostream& print(std::ostream& os)const override
 	{
 		os << position;
 		os<< endl;
@@ -119,7 +118,7 @@ public:
 		std::cout << "PEDestructor:\t" << this << std::endl;
 	}
 	//             Methods:
-	virtual std::ostream& print(std::ostream& os)const 
+	virtual std::ostream& print(std::ostream& os)const override
 	{
 		os << salary << std::endl;
 		return os;
@@ -167,7 +166,7 @@ public:
 		std::cout << "HEDestructor:\t" << this << std::endl;
 	}
 	//              Methods:
-	virtual std::ostream& print(std::ostream& os)const 
+	virtual std::ostream& print(std::ostream& os)const override
 	{
 		os <<"Тариф: " << rate <<", отработано:" << hours <<", итого: "<<get_salary()<< std::endl;	
 		return os;
@@ -193,6 +192,7 @@ void main()
 		std::cout << typeid(*department[i]).name() << std::endl;
 		//department[i]->print();
 		std::cout << *department[i] << std::endl;
+		
 		total_salary += department[i]->get_salary();
 		std::cout << "\n---------------------------------------\n";
 	}
