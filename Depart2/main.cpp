@@ -89,6 +89,7 @@ public:
 	}
 	virtual std::ostream& print(std::ostream& os)const override
 	{
+		Human::print(os);
 		os << position;
 		os<< endl;
 		return os;
@@ -120,6 +121,7 @@ public:
 	//             Methods:
 	virtual std::ostream& print(std::ostream& os)const override
 	{
+		Employee::print(os);
 		os << salary << std::endl;
 		return os;
 	}
@@ -168,6 +170,7 @@ public:
 	//              Methods:
 	virtual std::ostream& print(std::ostream& os)const override
 	{
+		Employee::print(os);
 		os <<"Тариф: " << rate <<", отработано:" << hours <<", итого: "<<get_salary()<< std::endl;	
 		return os;
 	}
