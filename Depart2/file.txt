@@ -1,0 +1,4 @@
+class PermanentEmployee:      Hudson    Steven    29  Programmer      70000
+class PermanentEmployee:      Horton    Alannah   25  Programmer      50000
+class HourlyEmployee:         Cain      Michael   32  Programmer   700  8
+class HourlyEmployee:         Hicks     Kristina  27  Programmer   500  8

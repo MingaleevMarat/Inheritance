@@ -1,4 +1,5 @@
 #include<iostream>
+#include<fstream>
 #include<string>
 using namespace std;
 
@@ -56,11 +57,37 @@ public:
 	}
 	virtual std::ostream& print(std::ostream& os)const
 	{
-		os << last_name << " " << first_name << " " << age << " лет" << endl;
+		/*os << last_name << " " << first_name << " " << age << " лет" << endl;
+		return os;*/
+		
+		os << left;
+		os.width(10);
+		os << last_name;
+		os.width(10);
+		os << first_name;
+		os.width(3);
+		os << age << " лет";
+		return os;
+	}
+friend ofstream& operator<<(std::ofstream& os, const Human& obj)
+{
+	return obj.print(os);
+}
+	virtual std::ofstream& print(std::ofstream& os)const
+	{
+		/*os << last_name << " " << first_name << " " << age << " лет" << endl;
+		return os;*/
+
+		os << left;
+		os.width(10);
+		os << last_name;
+		os.width(10);
+		os << first_name;
+		os.width(3);
+		os << age;
 		return os;
 	}
 };
-
 #define EMPLOYEE_TAKE_PARAMETERS	const std::string& position
 #define EMPLOYEE_GIVE_PARAMETERS	position
 
@@ -89,11 +116,19 @@ public:
 	}
 	virtual std::ostream& print(std::ostream& os)const override
 	{
-		Human::print(os);
+		Human::print(os)<<" ";
+		os.width(10);
 		os << position;
-		os<< endl;
 		return os;
 	}
+	virtual std::ofstream& print(std::ofstream& os)const override
+	{
+		Human::print(os) << " ";
+		os.width(10);
+		os << position;
+		return os;
+	}
+
 };
 #define PERMANENT_EMPLOYEE_TAKE_PARAMETERS double salary
 #define PERMANENT_EMPLOYEE_GIVE_PARAMETERS salary
@@ -119,12 +154,21 @@ public:
 		std::cout << "PEDestructor:\t" << this << std::endl;
 	}
 	//             Methods:
-	virtual std::ostream& print(std::ostream& os)const override
-	{
-		Employee::print(os);
-		os << salary << std::endl;
-		return os;
-	}
+		virtual std::ostream& print(std::ostream& os)const override
+		{
+			Employee::print(os) << " ";
+			
+			os << salary;
+			return os;
+		}
+		virtual std::ofstream& print(std::ofstream& os)const override
+		{
+			Employee::print(os) << " ";
+			os << right;
+			os.width(10);
+			os << salary;
+			return os;
+		}
 };
 #define HOURLY_EMPLOYEE_TAKE_PARAMETERS double rate, int hours
 #define HOURLY_EMPLOYEE_GIVE_PARAMETERS rate, hours
@@ -170,11 +214,25 @@ public:
 	//              Methods:
 	virtual std::ostream& print(std::ostream& os)const override
 	{
-		Employee::print(os);
-		os <<"Тариф: " << rate <<", отработано:" << hours <<", итого: "<<get_salary()<< std::endl;	
+		Employee::print(os) << " ";
+		os << "Тариф: ";
+		os.width(5);
+		os<<right;
+		os<< rate << ", отработано:";
+		os.width(3);
+			os<< hours <<", итого: "<<get_salary();	
 		return os;
 	}
-	
+	virtual std::ofstream& print(std::ofstream& os)const override
+	{
+		Employee::print(os) << " ";
+		os.width(5);
+		os << right;
+		os << rate;
+		os.width(3);
+		os << hours;
+		return os;
+	}
 };
 
 
@@ -201,6 +259,17 @@ void main()
 	}
 	std::cout << "Общая зарплата всего отдела: " << total_salary << std::endl;
 	std::cout << "\n---------------------------------------\n";
+
+	ofstream fout("file.txt");
+	for (int i = 0; i < sizeof(department) / sizeof(Employee*); i++)
+	{
+		fout.width(30);
+		fout << left;
+		fout << string(typeid(*department[i]).name()) + ": ";
+		fout<< *department[i] << endl;
+	}
+	fout.close();
+	system("start notepad file.txt");
 	for (int i = 0; i < sizeof(department) / sizeof(department[0]); i++)
 	{
 		delete department[i];
