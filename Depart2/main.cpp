@@ -87,7 +87,18 @@ friend ofstream& operator<<(std::ofstream& os, const Human& obj)
 		os << age;
 		return os;
 	}
+	virtual ifstream& scan(ifstream& is)
+	{
+		is >> last_name >> first_name >> age;
+		return is;
+	}
+	friend ifstream& operator>>(ifstream& is,  Human& obj)
+	{
+		return obj.scan(is);
+	}
+
 };
+
 #define EMPLOYEE_TAKE_PARAMETERS	const std::string& position
 #define EMPLOYEE_GIVE_PARAMETERS	position
 
@@ -127,6 +138,12 @@ public:
 		os.width(10);
 		os << position;
 		return os;
+	}
+	virtual ifstream& scan(ifstream& is)
+	{
+		Human::scan(is);
+		is >> position;
+		return is;
 	}
 
 };
@@ -168,6 +185,12 @@ public:
 			os.width(10);
 			os << salary;
 			return os;
+		}
+		virtual ifstream& scan(ifstream& is)
+		{
+			Employee::scan(is);
+			is >> salary;
+			return is;
 		}
 };
 #define HOURLY_EMPLOYEE_TAKE_PARAMETERS double rate, int hours
@@ -233,16 +256,30 @@ public:
 		os << hours;
 		return os;
 	}
+	virtual ifstream& scan(ifstream& is)
+	{
+		Employee::scan(is);
+		is >> rate>>hours;
+		return is;
+	}
 };
 
+Employee* EmployeeFactory(const string& type)
+{
+	if (type.find("PermanentEmployee")!= std::string::npos)return new class PermanentEmployee("", "", 0, "", 0);
+	if (type.find("HourlyEmployee") != std::string::npos)return new class HourlyEmployee("", "", 0, "", 0,0);
+	
+}
+//#define SAVE_TO_FILE
 
 void main()
 {
 	setlocale(LC_ALL, "");
+#ifdef SAVE_TO_FILE
 	Employee* department[] =
 	{
-		new PermanentEmployee ("Hudson","Steven",29,"Programmer",70000),
-		new PermanentEmployee ("Horton","Alannah",25,"Programmer",50000),
+		new PermanentEmployee("Hudson","Steven",29,"Programmer",70000),
+		new PermanentEmployee("Horton","Alannah",25,"Programmer",50000),
 		new HourlyEmployee("Cain","Michael",32,"Programmer",700,8),
 		new HourlyEmployee("Hicks","Kristina",27,"Programmer",500,8)
 	};
@@ -253,7 +290,7 @@ void main()
 		std::cout << typeid(*department[i]).name() << std::endl;
 		//department[i]->print();
 		std::cout << *department[i] << std::endl;
-		
+
 		total_salary += department[i]->get_salary();
 		std::cout << "\n---------------------------------------\n";
 	}
@@ -266,7 +303,7 @@ void main()
 		fout.width(30);
 		fout << left;
 		fout << string(typeid(*department[i]).name()) + ": ";
-		fout<< *department[i] << endl;
+		fout << *department[i] << endl;
 	}
 	fout.close();
 	system("start notepad file.txt");
@@ -274,4 +311,47 @@ void main()
 	{
 		delete department[i];
 	}
+#endif // SAVE_TO_FILE
+	Employee** department = nullptr;
+		int n = 0;
+
+	ifstream fin("file.txt");
+	if (fin.is_open())
+	{
+		string employee_type;
+		for (; !fin.eof(); n++)
+		{
+			getline(fin, employee_type);
+		}
+		n--;
+		cout << n << endl;
+		department = new Employee * [n] {};
+		cout << fin.tellg() << endl;
+		fin.clear();
+		fin.seekg(0);
+		cout << fin.tellg() << endl;
+
+		for (int i = 0; i < n; i++)
+		{
+			getline(fin, employee_type, ':');
+			department[i] = EmployeeFactory(employee_type);
+			fin >> *department[i];
+		}
+	}
+	else
+	{
+		cerr << "Error: file not found" << endl;
+	}
+	for (int i = 0; i < n; i++)
+	{
+		cout << *department[i] << endl;
+	}
+	for (int i = 0; i < n; i++)
+	{
+		delete department[i];
+	}
+	
+	delete[] department;
+	fin.close();
+
 }
