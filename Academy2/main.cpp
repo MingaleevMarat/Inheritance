@@ -1,6 +1,8 @@
 //Academy
 #include<iostream>
+#include<fstream>
 #include<string>
+
 using namespace std;
 #define HUMAN_TAKE_PARAMETRS const std::string& last_name, const std::string& first_name, unsigned int age
 #define HUMAN_GIVE_PARAMETRS last_name, first_name, age
@@ -52,9 +54,50 @@ public:
 	}
 
 	//				Methods:
-	virtual void print()const
+	friend std::ostream& operator<<(std::ostream& os, const Human& obj)
 	{
-		std::cout << last_name << " " << first_name << " " << age << " лет" << std::endl;
+		return obj.print(os);
+	}
+	virtual std::ostream& print(std::ostream& os)const
+	{
+		/*os << last_name << " " << first_name << " " << age << " лет" << endl;
+		return os;*/
+
+		os << left;
+		os.width(10);
+		os << last_name;
+		os.width(10);
+		os << first_name;
+		os.width(3);
+		os << age << " лет";
+		return os;
+	}
+	friend ofstream& operator<<(std::ofstream& os, const Human& obj)
+	{
+		return obj.print(os);
+	}
+	virtual std::ofstream& print(std::ofstream& os)const
+	{
+		/*os << last_name << " " << first_name << " " << age << " лет" << endl;
+		return os;*/
+
+		os << left;
+		os.width(10);
+		os << last_name;
+		os.width(10);
+		os << first_name;
+		os.width(3);
+		os << age;
+		return os;
+	}
+	virtual ifstream& scan(ifstream& is)
+	{
+		is >> last_name >> first_name >> age;
+		return is;
+	}
+	friend ifstream& operator>>(ifstream& is, Human& obj)
+	{
+		return obj.scan(is);
 	}
 };
 #define STUDENT_TAKE_PARAMETRS const std::string& speciality, const std::string& group, double rating, double attendance
@@ -114,11 +157,27 @@ public:
 		std::cout << "SDestructor:\t" << this << std::endl;
 	}
 
-	void print()const
+	virtual std::ostream& print(std::ostream& os)const override
 	{
-		Human::print();
-		std::cout << speciality << " " << group << " " << rating << " " << attendance << std::endl;
+		Human::print(os) << " ";
+		os.width(10);
+		os << speciality << group << rating << attendance;
+		return os;
 	}
+	virtual std::ofstream& print(std::ofstream& os)const override
+	{
+		Human::print(os) << " ";
+		os.width(10);
+		os << speciality << group << rating << attendance;
+		return os;
+	}
+	virtual ifstream& scan(ifstream& is)
+	{
+		Human::scan(is);
+		is >> speciality >> group >> rating >> attendance;
+		return is;
+	}
+	
 };
 #define TEACHER_TAKE_PARAMETRS const std::string& speciality, unsigned int experience
 class Teacher :public Human
@@ -155,11 +214,29 @@ public:
 		std::cout << "TDestructor:\t" << this << std::endl;
 	}
 	//					Methods
-	void print()const
+	virtual std::ostream& print(std::ostream& os)const override
 	{
-		Human::print();
-		std::cout << speciality << " " << experience << std::endl;
+		Human::print(os) << " ";
+
+		os << speciality << experience;
+		return os;
 	}
+	virtual std::ofstream& print(std::ofstream& os)const override
+	{
+		Human::print(os) << " ";
+		os << right;
+		os.width(10);
+		os << speciality<< experience;
+		return os;
+	}
+	virtual ifstream& scan(ifstream& is)
+	{
+		Human::scan(is);
+		is >> speciality >> experience;
+		return is;
+	}
+		
+
 };
 #define GRADUATE_TAKE_PARAMETRS const std::string& subject
 class Graduate :public Student
@@ -185,16 +262,42 @@ public:
 		std::cout << "GDestructor:\t" << this << std::endl;
 	}
 	//						Methods:
-	void print()const
+	virtual std::ostream& print(std::ostream& os)const override
 	{
-		Student::print();
-		std::cout << subject << std::endl;
+		Student::print(os) << " ";
+		os.width(5);
+		os << right;
+		os << subject;
+		return os;
 	}
+	virtual std::ofstream& print(std::ofstream& os)const override
+	{
+		Student::print(os) << " ";
+		os.width(5);
+		os << right;
+		os << subject;
+		return os;
+	}
+	virtual ifstream& scan(ifstream& is)
+	{
+		Student::scan(is);
+		is >> subject;
+		return is;
+	}
+		
+	
 };
+Human* HumanFactory(const string& type)
+{
+	if (type.find("Teacher") != std::string::npos)return new class Teacher("", "", 0, "", 0);
+	if (type.find("Student") != std::string::npos)return new class Student("", "", 0, "", "", 0,0);
+	if (type.find("Graduate") != std::string::npos)return new class Graduate("", "", 0, "", "", 0, 0,"");
+}
 
 //Resharper
 
 //#define INHERITANCE 
+//#define SAVE_TO_FILE
 void main()
 {
 	setlocale(LC_ALL, "");
@@ -212,6 +315,7 @@ void main()
 	grad.print();
 #endif // INHERITANCE 
 	//generalisation(Upcast)
+#ifdef SAVE_TO_FILE
 	Human* group[] =
 	{
 		new Student("Pinkman", "Jessie", 25, "Chemistry", "WW_123", 85, 95),
@@ -222,15 +326,71 @@ void main()
 	new Student("Montana", "Antonio", 30, "Cryminalistic", "Vice", 90, 80)
 
 	};
+	double total_salary = 0;
 	std::cout << sizeof(group) / sizeof(Human*) << std::endl;
 	for (int i = 0; i < sizeof(group)/sizeof(Human*); i++)
 	{
 		std::cout << typeid(*group[i]).name() << std::endl;
-		group[i]->print();
+		std::cout << *group[i] << std::endl;
 		std::cout << "\n---------------------------------------\n";
 	}
+
+	ofstream fout("file.txt");
+	for (int i = 0; i < sizeof(group) / sizeof(Human*); i++)
+	{
+		fout.width(30);
+		fout << left;
+		fout << string(typeid(*group[i]).name()) + ": ";
+		fout << *group[i] << endl;
+	}
+	fout.close();
+	system("start notepad file.txt");
 	for (int i = 0; i < sizeof(group) / sizeof(group[0]); i++)
 	{
 		delete group[i];
 	}
+#endif // SAVE_TO_FILE
+
+	Human** group = nullptr;
+	int n = 0;
+
+	ifstream fin("file.txt");
+	if (fin.is_open())
+	{
+		string human_type;
+		for (; !fin.eof(); n++)
+		{
+			getline(fin, human_type);
+		}
+		n--;
+		cout << n << endl;
+		group = new Human * [n] {};
+		cout << fin.tellg() << endl;
+		fin.clear();
+		fin.seekg(0);
+		cout << fin.tellg() << endl;
+
+		for (int i = 0; i < n; i++)
+		{
+			getline(fin, human_type, ':');
+			group[i] = HumanFactory(human_type);
+			fin >> *group[i];
+		}
+	}
+	else
+	{
+		cerr << "Error: file not found" << endl;
+	}
+	for (int i = 0; i < n; i++)
+	{
+		cout << *group[i] << endl;
+	}
+	for (int i = 0; i < n; i++)
+	{
+		delete group[i];
+	}
+
+	delete[] group;
+	fin.close();
+
 }
