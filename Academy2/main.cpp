@@ -383,6 +383,7 @@ void main()
 			group[i] = HumanFactory(human_type);
 			fin >> *group[i];
 		}
+		fin.close();
 	}
 	else
 	{
@@ -398,6 +399,6 @@ void main()
 	}
 
 	delete[] group;
-	fin.close();
+	
 
 }
