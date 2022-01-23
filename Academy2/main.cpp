@@ -161,7 +161,15 @@ public:
 	{
 		Human::print(os) << " ";
 		os.width(10);
-		os << speciality << group << rating << attendance;
+		os << " ";
+		os << speciality;
+		os << " "; 
+		os<< group;
+		os << " "; 
+		os<< rating;
+		os << " "; 
+		os<< attendance;
+		
 		return os;
 	}
 	virtual std::ofstream& print(std::ofstream& os)const override
@@ -217,8 +225,9 @@ public:
 	virtual std::ostream& print(std::ostream& os)const override
 	{
 		Human::print(os) << " ";
-
-		os << speciality << experience;
+		os << speciality;
+		os << " ";
+		os<< experience;
 		return os;
 	}
 	virtual std::ofstream& print(std::ofstream& os)const override
@@ -226,7 +235,7 @@ public:
 		Human::print(os) << " ";
 		os << right;
 		os.width(10);
-		os << speciality<< experience;
+		os << speciality << experience;
 		return os;
 	}
 	virtual ifstream& scan(ifstream& is)
@@ -265,8 +274,6 @@ public:
 	virtual std::ostream& print(std::ostream& os)const override
 	{
 		Student::print(os) << " ";
-		os.width(5);
-		os << right;
 		os << subject;
 		return os;
 	}
