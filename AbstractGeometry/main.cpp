@@ -1,7 +1,7 @@
 #define _USE_MATH_DEFINES
 #pragma warning(disable:4326)
 
-//#include<Windows.h>
+#include<Windows.h>
 #include<ddraw.h>
 #include<iostream>
 #include<math.h>
@@ -389,6 +389,6 @@ void main()
 
 	//Geometry::Circle circle(150, Geometry::Color::blue, 300, 400, 5);
 	//circle.info();
-	Geometry::Triangle triangle((6,6),(200,200),(300,300), Geometry::Color::green, 10,10,15 );
+	Geometry::Triangle triangle(106,107,109, Geometry::Color::green, 60,60,65 );
 	triangle.info();
 }
