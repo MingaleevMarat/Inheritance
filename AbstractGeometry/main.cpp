@@ -1,7 +1,8 @@
 #define _USE_MATH_DEFINES
 #pragma warning(disable:4326)
 
-#include<Windows.h>
+//#include<Windows.h>
+#include<ddraw.h>
 #include<iostream>
 #include<math.h>
 using namespace std;
@@ -275,6 +276,98 @@ enum (enumeration - перечисление) - это набор именованных констант типа int.
 			Shape::info();
 		}
 	};
+
+	class Triangle :public Shape
+	{
+		double side_a;
+		double side_b;
+		double side_c;
+
+		public:
+			double get_side_a()const
+			{
+				return side_a;
+			}
+			const double& set_side_a(double side_a)
+			{
+				if (side_a <= 0)side_a = 10;
+				this->side_a = side_a;
+				return this->side_a;
+			}
+			double get_side_b()const
+			{
+				return side_b;
+			}
+			const double& set_side_b(double side_b)
+			{
+				if (side_b <= 0)side_b = 10;
+				this->side_b = side_b;
+				return this->side_b;
+			}
+			double get_side_c()const
+			{
+				return side_c;
+			}
+			const double& set_side_c(double side_c)
+			{
+				if (side_c <= 0)side_c = 10;
+				this->side_c = side_c;
+				return this->side_c;
+			}
+			Triangle(double side_a, double side_b, double side_c,
+				Color color,
+				unsigned int start_x, unsigned int start_y,
+				unsigned int line_width)
+				:Shape(color, start_x, start_y, line_width)
+			{
+				set_side_a(side_a);
+				set_side_b(side_b);
+				set_side_c(side_c);
+			}
+			~Triangle(){}
+			double get_area()const
+			{
+				return sqrt(((side_a + side_b + side_c)/2)*(((side_a + side_b + side_c) / 2)-side_a)*(((side_a + side_b + side_c) / 2)-side_b)*(((side_a + side_b + side_c) / 2)-side_c));
+			}
+			double get_perimeter()const
+			{
+				return (side_a+side_b+side_c);
+			}
+
+			void draw()const
+			{
+				
+				//H - Handle
+				HWND hConsole = GetConsoleWindow();	//Получаем окно консоли, чтобы к нему можно было обратиться
+				HDC hdc = GetDC(hConsole);//Создаем контекст устройства для полученного окна.
+				HPEN hPen = CreatePen(PS_SOLID, line_width, (COLORREF)color);//Создаем карандаш, который будет рисовать контур
+				//PS_SOLID - сплошная линия, 5 - толщина линии 5 пикселов, RGB(...) - цвет.
+				SelectObject(hdc, hPen);//Выбираем созданный карандаш, чтобы им можно было рисовать.
+				HBRUSH hBrush = CreateSolidBrush((COLORREF)color);//Создаем кисть. Кисть закрашивает замкнутые фигуры.
+				SelectObject(hdc, hBrush);//Выбираем созданную кисть.
+				//Кисть и карандаш выбираются для того, чтобы функция Rectangle понимала чем рисовать
+
+				::MoveToEx(hdc, 100, 100, NULL);
+				::LineTo(hdc, start_x, start_y);
+				::LineTo(hdc, start_x + side_a, start_y + side_a);
+				::LineTo(hdc, start_x + side_b, start_y + side_b);
+				::LineTo(hdc, start_x + side_c, start_y + side_c);
+
+				//Удаляем созданную кисть и карандаш:
+				DeleteObject(hBrush);
+				DeleteObject(hPen);
+				//Освобождаем контекст устройства:
+				ReleaseDC(hConsole, hdc);
+			}
+			void info()const
+			{
+				cout << typeid(*this).name() << endl;
+				cout << "Длина стороны a : " << side_a << endl;
+				cout << "Длина стороны b : " << side_b << endl;
+				cout << "Длина стороны c : " << side_c << endl;
+				Shape::info();
+			}
+	};
 }
 
 void main()
@@ -284,16 +377,18 @@ void main()
 	//SetConsoleDisplayMode(hConsole, CONSOLE_FULLSCREEN_MODE, &buffer);
 	setlocale(LC_ALL, "");
 	//Shape shape(Color::console_blue);
-	Geometry::Square square(250, Geometry::Color::green, 100, 300, 5);
+	//Geometry::Square square(250, Geometry::Color::green, 100, 300, 5);
 	/*cout << "Сторона квадрата:\t" << square.get_side() << endl;
 	cout << "Площадь квадрата:\t" << square.get_area() << endl;
 	cout << "Периметр квадрата:\t" << square.get_perimeter() << endl;
 	square.draw();*/
-	square.info();
+	//square.info();
 
-	Geometry::Rectangle rect(200, 100, Geometry::Color::red, 300, 400, 5);
-	rect.info();
+	//Geometry::Rectangle rect(200, 100, Geometry::Color::red, 300, 400, 5);
+	//rect.info();
 
-	Geometry::Circle circle(150, Geometry::Color::blue, 300, 400, 5);
-	circle.info();
+	//Geometry::Circle circle(150, Geometry::Color::blue, 300, 400, 5);
+	//circle.info();
+	Geometry::Triangle triangle((6,6),(200,200),(300,300), Geometry::Color::green, 10,10,15 );
+	triangle.info();
 }
